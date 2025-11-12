@@ -1,6 +1,3 @@
-/*
-Copyright © 2025 David Ogbiko david.ogbiko@developersfoundary.org
-*/
 package cmd
 
 import (

@@ -1,10 +1,9 @@
-/*
-Copyright © 2025 David Ogbiko david.ogbiko@developersfoundary.org
-*/
 package cmd
 
 import (
 	"fmt"
+	"os"
+	"regexp"
 
 	"github.com/spf13/cobra"
 )
@@ -20,8 +19,36 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("check called")
+		// check if argument length less that or greater than 2
+		if len(args) != 2 {
+			fmt.Print("Only two email addresses are required")
+			os.Exit(1)
+		}
+
+		// validate email addresses
+		oldMail, newMail := args[0], args[1]
+		validOldMail := validateMail(oldMail)
+		validNewMail := validateMail(newMail)
+		if !validOldMail {
+			fmt.Printf("Old email address provided is invalid: %s", oldMail)
+			os.Exit(1)
+		}
+		if !validNewMail {
+			fmt.Printf("New email address provided is invalid: %s", newMail)
+			os.Exit(1)
+		}
+
+		// check if old and new email addresseses are in the db
+		// connect to the database, get a query cursor
+
+		// respond with validation message
 	},
+}
+
+func validateMail(s string) bool {
+	emailRegex := `^[a-zA-Z0-9.!#$%&'*+/=?^_` + "`" + `{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$`
+	re := regexp.MustCompile(emailRegex)
+	return re.MatchString(s)
 }
 
 func init() {
