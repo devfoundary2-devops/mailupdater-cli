@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"mailupdater/mailupdater/db"
-	"mailupdater/mailupdater/utils"
+	"mailupdater/db"
+	"mailupdater/utils"
 	"os"
 
 	"github.com/spf13/cobra"

@@ -1,6 +1,6 @@
 package main
 
-import "mailupdater/mailupdater/cmd"
+import "mailupdater/cmd"
 
 func main() {
 	cmd.Execute()
