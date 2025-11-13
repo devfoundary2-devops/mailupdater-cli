@@ -9,37 +9,30 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// checkCmd represents the check command
-var checkCmd = &cobra.Command{
-	Use:   "check",
-	Short: "Checks if an email address is in the database",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+// updateCmd represents the update command
+var updateCmd = &cobra.Command{
+	Use:   "update [old-email] [new-email]",
+	Short: "Updates a user's email address in the database",
+	Long: `Updates a user's email address after validating that:
+- The old email exists in the database
+- The new email does not already exist
+- Both emails are valid email addresses
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+Example:
+	mailupdater update john.doe@example.com john.doe@hey.com`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// check if argument length less that or greater than 2
-		if len(args) != 2 {
-			fmt.Print("Only two email addresses are required")
-			os.Exit(1)
-		}
-
-		// validate email addresses
 		oldMail, newMail := args[0], args[1]
-		validOldMail := utils.ValidateMail(oldMail)
-		validNewMail := utils.ValidateMail(newMail)
-		if !validOldMail {
-			fmt.Printf("Old email address provided is invalid: %s", oldMail)
-			os.Exit(1)
-		}
-		if !validNewMail {
-			fmt.Printf("New email address provided is invalid: %s", newMail)
+
+		if !utils.ValidateMail(oldMail) {
+			fmt.Printf("Error: Old email address is invalid: %s\n", oldMail)
 			os.Exit(1)
 		}
 
-		// Connect to database
+		if !utils.ValidateMail(newMail) {
+			fmt.Printf("Error: New email address is invalid: %s\n", newMail)
+			os.Exit(1)
+		}
+
 		database, err := db.NewDB()
 		if err != nil {
 			fmt.Printf("Error connecting to database: %v\n", err)
@@ -75,19 +68,33 @@ to quickly create a Cobra application.`,
 
 		fmt.Println("User validation passed")
 		fmt.Println("Ready to proceed with update.")
+
+		// Perform the mail update
+		fmt.Printf("Updating email for %s %s...\n", oldUser.FirstName, oldUser.LastName)
+		fmt.Printf(" From: %s\n", oldMail)
+		fmt.Printf(" To: %s\n", newMail)
+
+		err = database.UpdateEmail(oldMail, newMail)
+		if err != nil {
+			fmt.Printf("Error updating email: %v\n", err)
+			os.Exit(1)
+		}
+
+		fmt.Println("Email updated successfully.")
+
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(checkCmd)
+	rootCmd.AddCommand(updateCmd)
 
 	// Here you will define your flags and configuration settings.
 
 	// Cobra supports Persistent Flags which will work for this command
 	// and all subcommands, e.g.:
-	// checkCmd.PersistentFlags().String("foo", "", "A help for foo")
+	// updateCmd.PersistentFlags().String("foo", "", "A help for foo")
 
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
-	// checkCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	// updateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }

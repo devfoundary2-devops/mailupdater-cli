@@ -63,6 +63,27 @@ func (db *DB) CheckEmailsExists(email string) (*User, error) {
 	return &user, nil
 }
 
+// UpdateEmail updates a user's email address
+func (db *DB) UpdateEmail(oldEmail, newEmail string) error {
+	query := "UDPATE userss SET email = $1 WHERE email = $2"
+
+	result, err := db.conn.Exec(query, newEmail, oldEmail)
+	if err != nil {
+		return fmt.Errorf("failed to update email: %w", err)
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("failed to get rows affected: %w", err)
+	}
+
+	if rowsAffected == 0 {
+		return fmt.Errorf("no user found with email: %s", oldEmail)
+	}
+
+	return nil
+}
+
 // getEnv gets and environment variable or returns a default value
 func getEnv(key, defaultValue string) string {
 	if value := os.Getenv(key); value != "" {
