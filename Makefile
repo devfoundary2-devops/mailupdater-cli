@@ -31,9 +31,17 @@ run: build ## Build and run the CLI
 
 clean: ## Clean build artifacts
 	rm -rf bin/
+	rm -rf dist/
 
 test: ## Run tests
 	go test -v ./...
 
 install: build ## Install the CLI locally
 	go install ./mailupdater
+
+# tag: build ## Tag and push changes to Github
+# 	git tag -a v$(tag) -m "$(tag_msg)"
+# 	git push origin v$(tag)
+
+# release: tag ## Release using goreleaser
+# 	goreleaser release
