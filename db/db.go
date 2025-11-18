@@ -3,7 +3,7 @@ package db
 import (
 	"database/sql"
 	"fmt"
-	"os"
+	"mailupdater/utils"
 
 	_ "github.com/lib/pq"
 )
@@ -21,11 +21,11 @@ type DB struct {
 
 // NewDB creates a new database connection
 func NewDB() (*DB, error) {
-	host := getEnv("DB_HOST", "localhost")
-	port := getEnv("DB_PORT", "5434")
-	user := getEnv("DB_USER", "mailupdater")
-	password := getEnv("DB_PASSWORD", "mailupdater123")
-	dbname := getEnv("DB_NAME", "mailupdater")
+	host := utils.GetEnv("DB_HOST", "localhost")
+	port := utils.GetEnv("DB_PORT", "5434")
+	user := utils.GetEnv("DB_USER", "mailupdater")
+	password := utils.GetEnv("DB_PASSWORD", "mailupdater123")
+	dbname := utils.GetEnv("DB_NAME", "mailupdater")
 
 	connStr := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
@@ -82,12 +82,4 @@ func (db *DB) UpdateEmail(oldEmail, newEmail string) error {
 	}
 
 	return nil
-}
-
-// getEnv gets and environment variable or returns a default value
-func getEnv(key, defaultValue string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
-	}
-	return defaultValue
 }

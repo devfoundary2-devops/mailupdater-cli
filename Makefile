@@ -1,10 +1,12 @@
 .PHONY: help db-up db-down db-logs build run clean test
 
 help: ## Show this help message
-	@echo 'Usage: make [target]'
-	@echo ''
-	@echo 'Available targets:'
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  %-15s %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@printf "\n\033[1mAvailable Targets:\033[0m\n\n"
+	@awk 'BEGIN {FS = ":.*## " } \
+		/^[a-zA-Z0-9_-]+:.*## / { \
+			printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2 \
+		}' $(MAKEFILE_LIST)
+	@printf "\n"
 
 db-up: ## Start the database
 	docker compose up -d
